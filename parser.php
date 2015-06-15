@@ -12,15 +12,15 @@
     $worksheet  = $objPHPExcel->setActiveSheetIndexbyName('Sheet1');
 
     if($myType=="Results"){
-        $endingCol = 6;
+        $endingCol = 43;
         $infoCols = $endingCol-3;
     }else{
         $endingCol = 5;
         $infoCols = $endingCol-2;
     }
-    $startingRow  = 8;
+    $startingRow  = 7;
     
-    $highestRow         = $worksheet->getHighestRow();
+    $highestRow         = $worksheet->getHighestRow()-2;
     $highestColumn      = $worksheet->getHighestColumn();
     $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
     $nrColumns          = ord($highestColumn) - 64;
@@ -43,14 +43,14 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/myStyle.css" rel="stylesheet">
+    <link href="css/myStyleResults.css" rel="stylesheet">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>   
 </head>
 
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <!--<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -63,10 +63,8 @@
                     </li>
                 </ul>
             </div>
-            <!-- /.navbar-collapse -->
         </div>
-        <!-- /.container -->
-    </nav>
+    </nav>-->
 
     <!-- Page Content -->
     <div class="container">
@@ -83,12 +81,18 @@
                         echo '<tr>';
                     }
                     for ($col = 0; $col < $endingCol; ++ $col) {
-                        $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                        $val = $cell->getValue();
-                        if($col==0){
+                        if($col==0 || $col==1 || $col==42){
+                            $cell = $worksheet->getCellByColumnAndRow($col, $row);
+                            $val = $cell->getCalculatedValue();
+                            $val = preg_replace('/\s+/', '', $val);
+                            if($col==1){
+                                if($row>($startingRow+1)){
+                                    echo '<td><img src="flags/'. $val .'.jpg" class="flag"></td>';    
+                                }else{
+                                    echo'<td></td>';
+                                }
+                            }
                             echo '<td>' . $val .'</td>';
-                        }else{
-                            echo '<td class="col-md-'.$infoCols.'">' . $val .'</td>';
                         }
                     }
                     echo '</tr>';
